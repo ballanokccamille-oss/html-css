@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday Ate Shyra</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      overflow: hidden;
+      background: #000;
+      height: 100%; width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    canvas {
+      position: fixed; top: 0; left: 0; z-index: 1;
+    }
+    .container {
+      position: relative; width: 100%; height: 100%;
+      display: flex; justify-content: center; align-items: center;
+      z-index: 2;
+    }
+    .slide {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      color: white; text-align: center;
+      opacity: 0; transition: opacity 1.5s ease;
+      width: 100%;
+    }
+    .slide.active { opacity: 1; }
+    .countdown { font-size: 15vw; font-weight: bold; text-shadow: 0 0 30px #ff69b4; }
+    .birthday-text, .age-text { font-size: 8vw; font-weight: bold; text-shadow: 0 0 30px #ff69b4; }
+    .name-text { font-size: 10vw; font-weight: bold; text-shadow: 0 0 30px #ff69b4; }
+    .date-text { font-size: 7vw; font-weight: bold; text-shadow: 0 0 30px #ff69b4; }
+    .messages, .final-message {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 20px;
+      max-width: 800px; width: 90%; margin: auto;
+    }
+    .message, .final-message p {
+      font-size: 4vw; color: white;
+      text-shadow: 0 0 10px #ff69b4;
+      background: rgba(255, 105, 180, 0.1);
+      padding: 15px 25px; border-radius: 50px;
+      transform: translateY(20px); opacity: 0;
+      transition: all 0.8s ease;
+    }
+    .message:nth-child(2) { transition-delay: 0.3s; }
+    .message:nth-child(3) { transition-delay: 0.6s; }
+    .message:nth-child(4) { transition-delay: 0.9s; }
+    .message:nth-child(5) { transition-delay: 1.2s; }
+    .messages.active .message, .final-message.active p {
+      opacity: 1; transform: translateY(0);
+    }
+    .firework {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: #ff69b4;
+      border-radius: 50%;
+      animation: explode 1.5s ease-out forwards;
+      pointer-events: none;
+    }
+    @keyframes explode {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(0.1); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <audio autoplay loop>
+    <source src="https://cdn.pixabay.com/audio/2022/10/21/audio_bf40bfb7a5.mp3" type="audio/mpeg">
+  </audio>
+  <canvas id="matrix"></canvas>
+  <div class="container">
+    <div class="slide" id="slide1"><div class="countdown">3</div></div>
+    <div class="slide" id="slide2"><div class="countdown">2</div></div>
+    <div class="slide" id="slide3"><div class="countdown">1</div></div>
+    <div class="slide" id="slide4"><div class="birthday-text">HAPPY BIRTHDAY!</div></div>
+    <div class="slide" id="slide5"><div class="name-text">Ate Shyra</div></div>
+    <div class="slide" id="slide6"><div class="date-text">08.08.2003</div></div>
+    <div class="slide" id="slide7"><div class="age-text">HAPPY 22nd BIRTHDAY!</div></div>
+    <div class="slide" id="slide8">
+      <div class="messages" id="messages">
+        <div class="message">May your day be filled with joy and laughter!</div>
+        <div class="message">Wishing you all the happiness in the world!</div>
+        <div class="message">You deserve all the best in life!</div>
+        <div class="message">Happy Birthday, Ate Shyra! 💖</div>
+        <div class="message">May your special day bring you endless joy and blessings!</div>
+      </div>
+    </div>
+    <div class="slide" id="slide9">
+      <div class="final-message" id="finalMessage">
+        <p>Ate Shyra, thank you for being the light in so many lives, including mine. 
+          I hope this birthday fills your heart with the same warmth and happiness you give others every day.
+          You’re truly one of a kind, and I’m so proud of the person you are becoming.
+          Keep shining, keep growing, and never forget how loved you are.
+          Love you always,<br>Kristine 💖</p>
+      </div>
+    </div>
+  </div>
+  <script>
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+    function resizeCanvas() {
+      canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    const letters = "101010101♥SHYRA";
+    const fontSize = 14;
+    const columns = Math.floor(canvas.width / fontSize);
+    let drops = [];
+    for (let i = 0; i < columns; i++) drops[i] = 1;
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = fontSize + "px monospace";
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillStyle = "#ff69b4";
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(drawMatrix, 50);
+
+    const slides = [
+      'slide1', 'slide2', 'slide3', 'slide4', 'slide5',
+      'slide6', 'slide7', 'slide8', 'slide9'
+    ].map(id => document.getElementById(id));
+    const messages = document.getElementById('messages');
+    const finalMessage = document.getElementById('finalMessage');
+
+    let currentSlide = 0;
+    function showSlide(index) {
+      slides.forEach(slide => slide.classList.remove('active'));
+      slides[index].classList.add('active');
+      if (index === 7) messages.classList.add('active');
+      if (index === 8) {
+        finalMessage.classList.add('active');
+        triggerFireworks();
+      }
+    }
+    showSlide(currentSlide);
+    const timing = 5000; // Slower transition
+    for (let i = 1; i < slides.length; i++) {
+      setTimeout(() => showSlide(i), timing * i);
+    }
+
+    function triggerFireworks() {
+      const container = document.querySelector('.container');
+      for (let i = 0; i < 100; i++) {
+        const fw = document.createElement('div');
+        fw.className = 'firework';
+        fw.style.left = Math.random() * window.innerWidth + 'px';
+        fw.style.top = Math.random() * window.innerHeight + 'px';
+        container.appendChild(fw);
+        setTimeout(() => fw.remove(), 1500);
+      }
+    }
+  </script>
+</body>
+</html>
